@@ -78,13 +78,13 @@ def material_print(materials):
     else:
         print('\nMaterials Type And Count:')
         for material in materials:
-            print(material['materials'])
+            #print(material['materials'])
             for i in material['materials']:
                 # print(i['driveFile']["driveFile"]['title'])
                 form = (i['driveFile']["driveFile"]['title'])
-                # imagecount += form_images(form)
-                # videocount += form_videos(form)
-                # pdfcount += form_pdf(form)
+                imagecount += form_images(form)
+                videocount += form_videos(form)
+                pdfcount += form_pdf(form)
 
     print("Images = " + str(imagecount))
     print("Videos = " + str(videocount))
