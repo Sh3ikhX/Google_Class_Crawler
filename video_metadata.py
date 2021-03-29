@@ -36,8 +36,10 @@ videoID='1sT2pWeGZ8yfJSRHyTOYH04YCjLGaYiNb'
 
 def videodata(videoID):
         results1 = service.files().get(fileId=videoID,fields='videoMediaMetadata').execute()
-        return (results1['videoMediaMetadata']['durationMillis'])
+        data = (results1['videoMediaMetadata']['durationMillis'])
+        seconds = int(data) / 1000
+        return (seconds)
 
-data= videodata(videoID)
-seconds= int(data)/1000
-print(seconds)
+# data= videodata(videoID)
+# seconds= int(data)/1000
+# print(seconds)

@@ -109,9 +109,9 @@ def form_videos(form,id):
     #print()
     if ((re.findall(r"\S+\.mp4", form))):
         #print("Title = "+form)
-        print("id = "+id)
-        # data = videodata('1qFdF1M-YYMcEz2l2JA7k0g1uhIjuktGT')
-        # print(data)
+        #print("id = "+id)
+        #data = videodata('1qFdF1M-YYMcEz2l2JA7k0g1uhIjuktGT')
+        #print("Duration = "+str(data))
         return 1
     else:
         return 0
