@@ -17,7 +17,7 @@ SCOPES = ['https://www.googleapis.com/auth/classroom.student-submissions.student
 # https://www.googleapis.com/auth/classroom.coursework.students.readonly
 
 
-
+lectures = assingnments = mid_exam = final_exam = 0
 
 def main():
     """Shows basic usage of the Classroom API.
@@ -63,6 +63,7 @@ def main():
 
 
 
+
     if not courses:
         print('No courses found.')
     else:
@@ -79,6 +80,12 @@ def main():
 
 def material_print(materials):
     imagecount = videocount = pdfcount = 0
+    global lectures
+    global assingnments
+    global mid_exam
+    global final_exam
+
+
 
     if not materials:
         print('No material found.')
@@ -86,6 +93,8 @@ def material_print(materials):
         print('\nMaterials Type And Count:')
         for material in materials:
             #print(material['materials'])
+            #print(material['title'])
+            classification(material['title'])
             for i in material['materials']:
                 # print(i['driveFile']["driveFile"]['title'])
                 form = (i['driveFile']["driveFile"]['title'])
@@ -93,10 +102,16 @@ def material_print(materials):
                 imagecount += form_images(form)
                 videocount += form_videos(form,id)
                 pdfcount += form_pdf(form)
-    print("***************************\nStats")
+    #print("***************************\nStats")
     print("Images = " + str(imagecount))
     print("Videos = " + str(videocount))
     print("Pdf = " + str(pdfcount))
+    print("Classification: ")
+    print("Total Lectures = " + str(lectures) + "\nTotal Assignments  = " + str(
+        assingnments) + "\nTotal Mid exams = " + str(mid_exam) + "\nTotal Final exam = " + str(final_exam))
+    lectures = assingnments = mid_exam = final_exam = 0
+
+
 
 def form_images(form):
     if ((re.findall(r"\S+\.jpg", form)) or re.findall(r"\S+\.png", form)):
@@ -108,10 +123,10 @@ def form_images(form):
 def form_videos(form,id):
     #print()
     if ((re.findall(r"\S+\.mp4", form))):
-        #print("Title = "+form)
+        # print("Title = "+form)
         #print("id = "+id)
-        #data = videodata('1qFdF1M-YYMcEz2l2JA7k0g1uhIjuktGT')
-        #print("Duration = "+str(data))
+        # data = videodata(id)
+        # print("Duration = "+str(data)+' seconds')
         return 1
     else:
         return 0
@@ -122,6 +137,25 @@ def form_pdf(form):
         return 1
     else:
         return 0
+
+def classification(title):
+    global lectures
+    global assingnments
+    global mid_exam
+    global final_exam
+    #lectures = assingnments = mid_exam = final_exam = 0
+
+    if("Lecture" in title or "lecture" in title):
+        lectures+=1
+    elif("assignment " in title or "Assignment " in title):
+        assingnments+=1
+    elif ("Mid exam" in title or "Mid term" in title or "mid Term" in title or "mid" in title or "Mid" in title):
+        mid_exam += 1
+    elif ("Final exam" in title or "Final term" in title or "final Term" in title or "Final" in title or "final" in title):
+        final_exam += 1
+
+
+
 
 
 
