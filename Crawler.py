@@ -78,7 +78,7 @@ def material_print(materials):
     else:
         print('\nMaterials Type And Count:')
         for material in materials:
-            #print(material['materials'])
+            print(material['materials'])
             for i in material['materials']:
                 # print(i['driveFile']["driveFile"]['title'])
                 form = (i['driveFile']["driveFile"]['title'])
