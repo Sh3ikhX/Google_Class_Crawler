@@ -5,6 +5,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 import re
+from video_metadata import videodata
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/classroom.student-submissions.students.readonly',
@@ -56,6 +57,12 @@ def main():
    # materials = materials_api.get('courseWorkMaterial', [])
     #print(materials_api)
 
+
+
+
+
+
+
     if not courses:
         print('No courses found.')
     else:
@@ -78,14 +85,15 @@ def material_print(materials):
     else:
         print('\nMaterials Type And Count:')
         for material in materials:
-            print(material['materials'])
+            #print(material['materials'])
             for i in material['materials']:
                 # print(i['driveFile']["driveFile"]['title'])
                 form = (i['driveFile']["driveFile"]['title'])
+                id = (i['driveFile']["driveFile"]['id'])
                 imagecount += form_images(form)
-                videocount += form_videos(form)
+                videocount += form_videos(form,id)
                 pdfcount += form_pdf(form)
-
+    print("***************************\nStats")
     print("Images = " + str(imagecount))
     print("Videos = " + str(videocount))
     print("Pdf = " + str(pdfcount))
@@ -97,8 +105,13 @@ def form_images(form):
         return 0
 
 
-def form_videos(form):
+def form_videos(form,id):
+    #print()
     if ((re.findall(r"\S+\.mp4", form))):
+        #print("Title = "+form)
+        print("id = "+id)
+        # data = videodata('1qFdF1M-YYMcEz2l2JA7k0g1uhIjuktGT')
+        # print(data)
         return 1
     else:
         return 0
