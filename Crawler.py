@@ -106,7 +106,7 @@ def material_print(materials):
     print("Images = " + str(imagecount))
     print("Videos = " + str(videocount))
     print("Pdf = " + str(pdfcount))
-    print("Classification: ")
+    print("\nClassification: ")
     print("Total Lectures = " + str(lectures) + "\nTotal Assignments  = " + str(
         assingnments) + "\nTotal Mid exams = " + str(mid_exam) + "\nTotal Final exam = " + str(final_exam))
     lectures = assingnments = mid_exam = final_exam = 0
@@ -123,10 +123,10 @@ def form_images(form):
 def form_videos(form,id):
     #print()
     if ((re.findall(r"\S+\.mp4", form))):
-        # print("Title = "+form)
+        print("Title = "+form)
         #print("id = "+id)
-        # data = videodata(id)
-        # print("Duration = "+str(data)+' seconds')
+        data = videodata(id)
+        print("Duration = "+str(data)+' seconds')
         return 1
     else:
         return 0
