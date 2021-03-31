@@ -6,6 +6,7 @@ from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 import re
 from video_metadata import videodata
+import xlwt
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/classroom.student-submissions.students.readonly',
@@ -23,7 +24,8 @@ def main():
     """Shows basic usage of the Classroom API.
     Prints the names of the first 10 courses the user has access to.
     """
-
+    global file1
+    file1 = open("MyFile.txt", "w")
 
 
     creds = None
@@ -61,8 +63,8 @@ def main():
 
 
 
-
-
+    global coursename
+    coursename = []
 
     if not courses:
         print('No courses found.')
@@ -71,20 +73,28 @@ def main():
         for course in courses:
             print("*******************************")
             print("Course Name: "+course['name'])
+            file1.write("\n*******************************\nCourse Name: "+course['name'])
+            coursename.append(course['name'])
             materials_api = service.courses().courseWorkMaterials().list(courseId=course['id']).execute()
             materials = materials_api.get('courseWorkMaterial', [])
             material_print(materials)
             #print("*******************************")
-
+    #print(len(coursename))
+   # report()
+    file1.close()
 
 
 def material_print(materials):
+    global imagecount
+    global videocount
+    global pdfcount
     imagecount = videocount = pdfcount = 0
     global lectures
     global assingnments
     global mid_exam
     global final_exam
-
+    global mat_title
+    mat_title=[]
 
 
     if not materials:
@@ -93,11 +103,12 @@ def material_print(materials):
         print('\nMaterials Type And Count:')
         for material in materials:
             #print(material['materials'])
-            #print(material['title'])
+
             classification(material['title'])
             for i in material['materials']:
                 # print(i['driveFile']["driveFile"]['title'])
                 form = (i['driveFile']["driveFile"]['title'])
+                mat_title.append(i['driveFile']["driveFile"]['title'])
                 id = (i['driveFile']["driveFile"]['id'])
                 imagecount += form_images(form)
                 videocount += form_videos(form,id)
@@ -109,6 +120,15 @@ def material_print(materials):
     print("\nClassification: ")
     print("Total Lectures = " + str(lectures) + "\nTotal Assignments  = " + str(
         assingnments) + "\nTotal Mid exams = " + str(mid_exam) + "\nTotal Final exam = " + str(final_exam))
+
+
+
+    file1.write("\n\nClassification: "+"\nTotal Lectures = " + str(lectures) + "\nTotal Assignments  = " + str(
+        assingnments) + "\nTotal Mid exams = " + str(mid_exam) + "\nTotal Final exam = " + str(final_exam))
+
+    file1.write("\n\nFile Types And Count\nImages = " + str(imagecount) + "\nVideos = " + str(videocount) + "\nPdf = " + str(pdfcount))
+
+
     lectures = assingnments = mid_exam = final_exam = 0
 
 
@@ -127,6 +147,8 @@ def form_videos(form,id):
         #print("id = "+id)
         data = videodata(id)
         print("Duration = "+str(data)+' seconds')
+        file1.write("\nTitle of video = "+form+"\nDuration = "+str(data)+' seconds')
+
         return 1
     else:
         return 0
@@ -153,7 +175,6 @@ def classification(title):
         mid_exam += 1
     elif ("Final exam" in title or "Final term" in title or "final Term" in title or "Final" in title or "final" in title):
         final_exam += 1
-
 
 
 

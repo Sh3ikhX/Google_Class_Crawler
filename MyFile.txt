@@ -1,0 +1,48 @@
+
+*******************************
+Course Name: PHP Development
+
+Classification: 
+Total Lectures = 0
+Total Assignments  = 0
+Total Mid exams = 0
+Total Final exam = 1
+
+File Types And Count
+Images = 5
+Videos = 0
+Pdf = 0
+*******************************
+Course Name: Python Class
+Title of video = file_example_MP4_480_1_5MG.mp4
+Duration = 30.033 seconds
+Title of video = test.mp4
+Duration = 30.033 seconds
+
+Classification: 
+Total Lectures = 2
+Total Assignments  = 1
+Total Mid exams = 1
+Total Final exam = 0
+
+File Types And Count
+Images = 2
+Videos = 2
+Pdf = 1
+*******************************
+Course Name: Matz Test
+Title of video = file_example_MP4_480_1_5MG.mp4
+Duration = 30.033 seconds
+Title of video = sample-mp4-file.mp4
+Duration = 125.933 seconds
+
+Classification: 
+Total Lectures = 2
+Total Assignments  = 1
+Total Mid exams = 1
+Total Final exam = 0
+
+File Types And Count
+Images = 2
+Videos = 2
+Pdf = 0
