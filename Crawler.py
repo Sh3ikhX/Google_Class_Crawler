@@ -7,6 +7,7 @@ from google.oauth2.credentials import Credentials
 import re
 from video_metadata import videodata
 import xlwt
+from db import mycursor
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/classroom.student-submissions.students.readonly',
@@ -76,6 +77,11 @@ def main():
             file1.write("\n*******************************\nCourse Name: "+course['name'])
             coursename.append(course['name'])
             materials_api = service.courses().courseWorkMaterials().list(courseId=course['id']).execute()
+            id=0
+            sql = "INSERT INTO courses (id,coursename, course_id) VALUES (%s,%s, %s)"
+            val = (id,str(course['name']), course['id'])
+            mycursor.execute(sql, val)
+            id=id+1
             materials = materials_api.get('courseWorkMaterial', [])
             material_print(materials)
             #print("*******************************")
