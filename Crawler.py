@@ -7,7 +7,7 @@ from google.oauth2.credentials import Credentials
 import re
 from video_metadata import videodata
 import xlwt
-from db import mycursor
+from db import mycursor,mydb
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/classroom.student-submissions.students.readonly',
@@ -64,8 +64,10 @@ def main():
 
 
 
-    global coursename
-    coursename = []
+    # global coursename
+    global courseid
+    # coursename = []
+    courseid = []
 
     if not courses:
         print('No courses found.')
@@ -75,22 +77,48 @@ def main():
             print("*******************************")
             print("Course Name: "+course['name'])
             file1.write("\n*******************************\nCourse Name: "+course['name'])
-            coursename.append(course['name'])
+            # coursename.append(course['name'])
+            courseid.append(course['id'])
+
+            # sql = "INSERT INTO courses (coursename, course_id) VALUES (%s, %s)"
+            # val = (course['name'],course['id'])
+            # mycursor.execute(sql, val)
             materials_api = service.courses().courseWorkMaterials().list(courseId=course['id']).execute()
-            id=0
-            sql = "INSERT INTO courses (id,coursename, course_id) VALUES (%s,%s, %s)"
-            val = (id,str(course['name']), course['id'])
-            mycursor.execute(sql, val)
-            id=id+1
+
+            # sql = "INSERT INTO courses (coursename, course_id) VALUES (%s, %s)"
+            # val = (str(course['name']), course['id'])
+            # mycursor.execute(sql, val)
+
             materials = materials_api.get('courseWorkMaterial', [])
-            material_print(materials)
+            material_print(materials,course['name'],course['id'])
             #print("*******************************")
     #print(len(coursename))
    # report()
+   #  for c in coursename:
+   #      # print(c)
+   #      i=0
+   #      # print(courseid[i])
+   #
+   #      sql = "INSERT INTO courses (coursename, course_id,lectures,assignments,mid_exams,final_exam) VALUES (%s, %s,%s, %s,%s, %s)"
+   #      val = (str(c), courseid[i],lectures,assingnments,mid_exam,final_exam)
+   #      mycursor.execute(sql, val)
+   #      i += 1
+
+    mydb.commit()
+
+    print('\n\n=============================\npriting from db')
+    sql="SELECT * FROM courses INNER JOIN video_details ON courses.course_id = video_details.course_id ORDER BY courses.id"
+    mycursor.execute(sql)
+    myresult = mycursor.fetchall()
+    columns = mycursor.description
+    result = [{columns[index][0]: column for index, column in enumerate(value)} for value in mycursor.fetchall()]
+    print(result)
+    for x in myresult:
+        print(x)
     file1.close()
 
 
-def material_print(materials):
+def material_print(materials,name,c_id):
     global imagecount
     global videocount
     global pdfcount
@@ -101,6 +129,7 @@ def material_print(materials):
     global final_exam
     global mat_title
     mat_title=[]
+
 
 
     if not materials:
@@ -116,11 +145,13 @@ def material_print(materials):
                 form = (i['driveFile']["driveFile"]['title'])
                 mat_title.append(i['driveFile']["driveFile"]['title'])
                 id = (i['driveFile']["driveFile"]['id'])
-                imagecount += form_images(form)
-                videocount += form_videos(form,id)
-                pdfcount += form_pdf(form)
+                imagecount += form_images(form,c_id)
+                videocount += form_videos(form,id,c_id)
+                pdfcount += form_pdf(form,c_id)
     #print("***************************\nStats")
-    print("Images = " + str(imagecount))
+
+    print("\n\n\nclass id = "+str(c_id))
+    print("\n\nImages = " + str(imagecount))
     print("Videos = " + str(videocount))
     print("Pdf = " + str(pdfcount))
     print("\nClassification: ")
@@ -134,19 +165,26 @@ def material_print(materials):
 
     file1.write("\n\nFile Types And Count\nImages = " + str(imagecount) + "\nVideos = " + str(videocount) + "\nPdf = " + str(pdfcount))
 
-
+    sql = "INSERT INTO courses (coursename, course_id,lectures,assignments,mid_exams,final_exam) VALUES (%s, %s,%s, %s,%s, %s)"
+    val = (name, str(c_id), str(lectures), str(assingnments), str(mid_exam), str(final_exam))
+    mycursor.execute(sql, val)
     lectures = assingnments = mid_exam = final_exam = 0
 
 
 
-def form_images(form):
+
+
+def form_images(form,c_id):
     if ((re.findall(r"\S+\.jpg", form)) or re.findall(r"\S+\.png", form)):
+        sql = "INSERT INTO video_details (course_id,image_title) VALUES (%s, %s)"
+        val = (str(c_id), form)
+        mycursor.execute(sql, val)
         return 1
     else:
         return 0
 
 
-def form_videos(form,id):
+def form_videos(form,id,c_id):
     #print()
     if ((re.findall(r"\S+\.mp4", form))):
         print("Title = "+form)
@@ -154,14 +192,19 @@ def form_videos(form,id):
         data = videodata(id)
         print("Duration = "+str(data)+' seconds')
         file1.write("\nTitle of video = "+form+"\nDuration = "+str(data)+' seconds')
-
+        sql="INSERT INTO video_details (course_id,video_title,video_duration) VALUES (%s, %s,%s)"
+        val = (str(c_id), str(form), str(data))
+        mycursor.execute(sql, val)
         return 1
     else:
         return 0
 
 
-def form_pdf(form):
+def form_pdf(form,c_id):
     if ((re.findall(r"\S+\.pdf", form))):
+        sql = "INSERT INTO video_details (course_id,pdf_title) VALUES (%s, %s)"
+        val = (str(c_id), form)
+        mycursor.execute(sql, val)
         return 1
     else:
         return 0
