@@ -8,6 +8,8 @@ import re
 from video_metadata import videodata
 import xlwt
 from db import mycursor,mydb
+import datetime
+
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/classroom.student-submissions.students.readonly',
@@ -25,6 +27,8 @@ def main():
     """Shows basic usage of the Classroom API.
     Prints the names of the first 10 courses the user has access to.
     """
+    global x
+    x = datetime.datetime.now()
     global file1
     file1 = open("MyFile.txt", "w")
 
@@ -107,12 +111,10 @@ def main():
     mydb.commit()
 
     print('\n\n=============================\npriting from db')
-    sql="SELECT * FROM courses INNER JOIN video_details ON courses.course_id = video_details.course_id ORDER BY courses.id"
+    sql="SELECT * FROM courses INNER JOIN video_details ON courses.course_id = video_details.course_id ORDER BY video_details.date"
     mycursor.execute(sql)
     myresult = mycursor.fetchall()
-    columns = mycursor.description
-    result = [{columns[index][0]: column for index, column in enumerate(value)} for value in mycursor.fetchall()]
-    print(result)
+
     for x in myresult:
         print(x)
     file1.close()
@@ -168,6 +170,8 @@ def material_print(materials,name,c_id):
     sql = "INSERT INTO courses (coursename, course_id,lectures,assignments,mid_exams,final_exam) VALUES (%s, %s,%s, %s,%s, %s)"
     val = (name, str(c_id), str(lectures), str(assingnments), str(mid_exam), str(final_exam))
     mycursor.execute(sql, val)
+
+
     lectures = assingnments = mid_exam = final_exam = 0
 
 
@@ -176,8 +180,8 @@ def material_print(materials,name,c_id):
 
 def form_images(form,c_id):
     if ((re.findall(r"\S+\.jpg", form)) or re.findall(r"\S+\.png", form)):
-        sql = "INSERT INTO video_details (course_id,image_title) VALUES (%s, %s)"
-        val = (str(c_id), form)
+        sql = "INSERT INTO video_details (course_id,image_title,date) VALUES (%s,%s, %s)"
+        val = (str(c_id), form,x)
         mycursor.execute(sql, val)
         return 1
     else:
@@ -192,8 +196,8 @@ def form_videos(form,id,c_id):
         data = videodata(id)
         print("Duration = "+str(data)+' seconds')
         file1.write("\nTitle of video = "+form+"\nDuration = "+str(data)+' seconds')
-        sql="INSERT INTO video_details (course_id,video_title,video_duration) VALUES (%s, %s,%s)"
-        val = (str(c_id), str(form), str(data))
+        sql="INSERT INTO video_details (course_id,video_title,video_duration,date) VALUES (%s, %s,%s,%s)"
+        val = (str(c_id), str(form), str(data),x)
         mycursor.execute(sql, val)
         return 1
     else:
@@ -201,9 +205,12 @@ def form_videos(form,id,c_id):
 
 
 def form_pdf(form,c_id):
+
+
+
     if ((re.findall(r"\S+\.pdf", form))):
-        sql = "INSERT INTO video_details (course_id,pdf_title) VALUES (%s, %s)"
-        val = (str(c_id), form)
+        sql = "INSERT INTO video_details (course_id,pdf_title,date) VALUES (%s, %s,%s)"
+        val = (str(c_id), form,x)
         mycursor.execute(sql, val)
         return 1
     else:
