@@ -27,8 +27,6 @@ if os.path.exists('token1.json'):
 service = build('drive', 'v3', credentials=creds)
 
     # Call the Drive v3 API
-    #results = service.files().list(pageSize=10, fields="nextPageToken, files(id, name)").execute()
-    # items = results.get('files', [])
 
 videoID='1sT2pWeGZ8yfJSRHyTOYH04YCjLGaYiNb'
 
@@ -40,6 +38,3 @@ def videodata(videoID):
         seconds = int(data) / 1000
         return (seconds)
 
-# data= videodata(videoID)
-# seconds= int(data)/1000
-# print(seconds)
