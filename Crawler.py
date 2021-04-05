@@ -84,7 +84,7 @@ def main():
 
 
 def print_db():
-    sql = "SELECT * FROM courses INNER JOIN video_details ON courses.course_id = video_details.course_id ORDER BY video_details.date"
+    sql = "SELECT * FROM courses INNER JOIN video_details ON courses.course_id = video_details.course_id ORDER BY video_details.date DESC"
     mycursor.execute(sql)
     myresult = mycursor.fetchall()
     print("CourseName\t\t\t CourseID\t\t Lectures  Assignments  MIDs  Finals  VideoDuration  Date/Time ")
